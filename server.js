@@ -2,7 +2,8 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const {MongoClient, ObjectID} = require('mongodb')
-const { connect } = require('http2')
+const { response } = require('express')
+const { request } = require('http')
 require('dotenv').config()
 const PORT = 8000
 
@@ -16,7 +17,6 @@ MongoClient.connect(dbConnectionStr)
         console.log(`Connected to Database`)
         db = client.db(dbName)
         collection = db.collection('movies')
-        
     })
 
 //middleware expressions, read urls, express json, use cors
