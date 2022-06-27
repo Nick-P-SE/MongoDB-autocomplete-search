@@ -1,7 +1,7 @@
 const express = require('express')
 const app = express()
 const cors = require('cors')
-const {MongoClient, ObjectID} = require('mongodb')
+const {MongoClient, ObjectId } = require('mongodb')
 const { response } = require('express')
 const { request } = require('http')
 require('dotenv').config()
@@ -14,50 +14,51 @@ let db,
 
 MongoClient.connect(dbConnectionStr)
     .then(client => {
-        console.log(`Connected to Database`)
+        console.log(`Connected to database`)
         db = client.db(dbName)
         collection = db.collection('movies')
     })
 
-//middleware expressions, read urls, express json, use cors
 app.use(express.urlencoded({extended : true}))
 app.use(express.json())
 app.use(cors())
 
-app.get("/search", async (req,res) =>{
-    try{
+app.get("/search", async (request,response) => {
+    try {
         let result = await collection.aggregate([
             {
-                "$Search": {
-                    "autocomplete": {
-                        "query": `${req.query.query}`,
+                "$search" : {
+                    "autocomplete" : {
+                        "query": `${request.query.query}`,
                         "path": "title",
                         "fuzzy": {
-                            //2 spellng errors, at least 3 chars in the word to search
-                            "maxEdits": 2,
+                            "maxEdits":2,
                             "prefixLength": 3
                         }
                     }
                 }
             }
         ]).toArray()
-        res.send(result)
+        //console.log(result)
+        response.send(result)
     } catch (error) {
-        res.status(500).send({message: error.message})
+        response.status(500).send({message: error.message})
+        //console.log(error)
     }
 })
 
-app.get("/get/:id", async (req,res) => {
+app.get("/get/:id", async (request, response) => {
     try {
         let result = await collection.findOne({
-            "_id": ObjectId(req.params.id)
+            "_id" : ObjectId(request.params.id)
         })
-        res.send(result)
+        response.send(result)
     } catch (error) {
-        res.status(500).send({message: error.message})
+        response.status(500).send({message: error.message})
     }
-})
+}
+)
 
 app.listen(process.env.PORT || PORT, () => {
-    console.log(`Server is running on ${PORT}`)
+    console.log(`Server is running.`)
 })

@@ -1,9 +1,7 @@
-//const { resourceLimits } = require("worker_threads")
-
 $(document).ready(function () {
     $('#title').autocomplete({
         source: async function(request,response) {
-            let data = await fetch(`http://locathost:8000/search?query=${request.term}`)
+            let data= await fetch(`http://localhost:8000/search?query=${request.term}`)
                     .then(results => results.json())
                     .then(results => results.map(result => {
                         return {
@@ -13,6 +11,7 @@ $(document).ready(function () {
                         }
                     }))
                 response(data)
+                //console.log(response)
         },
         minLength: 2,
         select: function(event, ui) {
@@ -21,11 +20,11 @@ $(document).ready(function () {
                 .then(result => result.json())
                 .then(result => {
                     $('#cast').empty()
-                    result.cast.forEach(cast => 
+                    result.cast.forEach(cast =>
                         {
-                            $(cast).append(`<li>${cast}</li>`)
+                            $("#cast").append(`<li>${cast}</li>`)
                         })
-                        $('img').attr('src', result.poster)
+                        $('img').attr('src',result.poster)
                 })
         }
     })
